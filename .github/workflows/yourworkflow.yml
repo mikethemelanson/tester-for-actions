@@ -1,0 +1,30 @@
+name: Apis.Dotnet.Request.Validation.Main
+ 
+on:
+  workflow_dispatch
+ 
+jobs:
+  build:
+ 
+	runs-on: ubuntu-latest
+ 
+	steps:
+	- uses: actions/checkout@v3.5.2
+	- name: Setup .NET Core
+  	uses: actions/setup-dotnet@3.0.3
+  	with:
+   	 dotnet-version: 3.1.301
+	- name: Install dependencies
+  	run: dotnet restore
+  	working-directory: ./Apis.Dotnet.Request.Validation/
+	- name: Build
+  	run: dotnet build --configuration Release --no-restore
+  	working-directory: ./Apis.Dotnet.Request.Validation/
+	- name: Test
+  	run: dotnet test --no-restore --verbosity normal
+  	working-directory: ./Apis.Dotnet.Request.Validation.UnitTest/
+	- name: Publish 
+  	uses: brandedoutcast/publish-nuget@v2.5.2 
+  	with:  
+    	PROJECT_FILE_PATH: Apis.Dotnet.Request.Validation/Apis.Dotnet.Request.Validation/Apis.Dotnet.Request.Validation.csproj 
+    	NUGET_KEY: ${{secrets.NUGET_API_KEY}}
